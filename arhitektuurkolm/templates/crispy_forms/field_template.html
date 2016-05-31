@@ -1,0 +1,5 @@
+<div class="form-group {% if form_show_errors%}{% if field.errors %} has-error{% endif %}{% endif %}">
+    {% if field.label and form_show_labels %}<label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}</label>{% endif %}
+    {{ field }}
+    <div class="error-block">{% for error in field.errors %}{{ error }}{% endfor %}</div>
+</div>

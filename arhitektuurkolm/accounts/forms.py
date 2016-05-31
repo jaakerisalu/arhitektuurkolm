@@ -6,10 +6,14 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field
+from crispy_forms.layout import Submit, Layout, Field, Div, HTML
+
+
 
 from accounts.emails import send_password_reset
 from accounts.models import User
+
+from django.utils.translation import ugettext_lazy as _
 
 
 class LoginForm(AuthenticationForm):
@@ -20,11 +24,26 @@ class LoginForm(AuthenticationForm):
         self.helper = FormHelper()
         self.helper.form_class = 'login-form'
         self.helper.form_show_labels = False
+
         self.helper.layout = Layout(
-            Field('username', placeholder="Username"),
-            Field('password', placeholder="Password")
+            Div(
+                HTML("<h1>{}</h1>".format(_("Enter self-service"))), css_class="form-title"
+            ),
+            Field(
+                'username', placeholder="{} / {}".format(_("Username"), _("email")), type="text",
+                template="crispy_forms/field_template.html", css_class="form-control"
+            ),
+            Field(
+                'password', placeholder=_("Password"), type="password", template="crispy_forms/field_template.html",
+                css_class="form-control"
+            ),
+            Div(
+                Submit(
+                    'submit', _('Log in'), template="crispy_forms/button_template.html"
+                ), css_class="form-submit"
+            )
         )
-        self.helper.add_input(Submit('submit', 'Log in'))
+
 
 
 class PasswordResetForm(auth_forms.PasswordResetForm):
