@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'crispy_forms',
-    'compressor',
 
     'accounts',
     'arhitektuurkolm',
@@ -120,16 +119,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
-
-COMPRESS_CSS_FILTERS = [
-    'compressor.filters.css_default.CssAbsoluteFilter',
-    'tg_utils.compressor_filters.CleanCssFilter',
-]
-COMPRESS_JS_FILTERS = [
-    'tg_utils.compressor_filters.UglifyFilter',
-]
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
