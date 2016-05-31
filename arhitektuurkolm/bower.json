@@ -1,0 +1,13 @@
+{
+    "name": "arhitektuurkolm",
+    "version": "0.0.0",
+    "authors": [
+        "Steve <steve@TODO>"
+    ],
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+    },
+    "resolutions": {
+    }
+}

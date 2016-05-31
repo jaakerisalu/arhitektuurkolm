@@ -1,0 +1,19 @@
+# Ignore everything in .idea
+.idea
+
+*.pyo
+*.pyc
+.sass-cache/
+npm-debug.log
+node_modules/
+venv/
+
+arhitektuurkolm/settings/local.py
+arhitektuurkolm/db.sqlite3
+arhitektuurkolm/assets/
+arhitektuurkolm/media/
+arhitektuurkolm/static/bower_components/
+
+arhitektuurkolm/.cache
+arhitektuurkolm/.coverage
+arhitektuurkolm/cover/
