@@ -30,10 +30,11 @@ EMAIL_SUBJECT_PREFIX = '[Arhitektuur kolm] '  # subject prefix for managers & ad
 SESSION_COOKIE_NAME = 'arhitektuurkolm_ssid'
 
 INSTALLED_APPS = [
+    'django.contrib.contenttypes',
+    'grappelli.dashboard',
     'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
-    'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -208,3 +209,8 @@ SILENCED_SYSTEM_CHECKS = [
 # Default values for sentry
 RAVEN_BACKEND_DSN = ''
 RAVEN_CONFIG = {}
+
+
+# Grappelli
+GRAPPELLI_ADMIN_TITLE = "IDU0020: Subjects Back-end"
+GRAPPELLI_INDEX_DASHBOARD = 'dashboard.CustomIndexDashboard'
