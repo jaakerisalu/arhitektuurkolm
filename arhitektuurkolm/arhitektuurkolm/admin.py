@@ -64,6 +64,8 @@ class SubjectAttributeInline(GenericTabularInline):
 
 
 class PersonAdmin(admin.ModelAdmin):
+    inlines = (SubjectAttributeInline,)
+    
     def delete_model(self, request, obj):
         """
         Given a model instance delete it from the database.
@@ -91,8 +93,10 @@ class EnterpriseAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline, )
     form = EnterpriseForm
 
+
 class EmployeeAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline,)
+
 
 admin.site.register(Address)
 admin.site.register(Employee, EmployeeAdmin)
