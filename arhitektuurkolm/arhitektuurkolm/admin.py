@@ -14,32 +14,35 @@ class SubjectAttributeInlineFormset(BaseGenericInlineFormSet):
             try:
                 if form.cleaned_data:
                     d = form.cleaned_data
+                    attr_type = d['attribute_type']
+                    correct_owner = attr_type.belongs_to_type
+                    # I apologize to the gods of Python for __class__.__name__ And everything else
+                    parent_class_name = self.instance.__class__.__name__.lower()
                     # Validate the attribute type
                     attribute_type_wrong = False
 
-                    # I apologize to the gods of Python for __class__.__name__ And everything else
-                    if (self.instance.__class__.__name__.lower() == "enterprise" and
-                            d['attribute_type'].belongs_to_type != SubjectAttribute.ENTERPRISE)\
-                        or (self.instance.__class__.__name__.lower() == "person" and
-                            d['attribute_type'].belongs_to_type != SubjectAttribute.PERSON)\
-                        or (self.instance.__class__.__name__.lower() == "employee" and
-                            d['attribute_type'].belongs_to_type != SubjectAttribute.EMPLOYEE)\
-                        or (self.instance.__class__.__name__.lower() == "customer" and
-                            d['attribute_type'].belongs_to_type != SubjectAttribute.CUSTOMER):
+                    if (parent_class_name == "enterprise" and
+                            correct_owner != SubjectAttribute.ENTERPRISE)\
+                        or (parent_class_name == "person" and
+                            correct_owner != SubjectAttribute.PERSON)\
+                        or (parent_class_name == "employee" and
+                            correct_owner != SubjectAttribute.EMPLOYEE)\
+                        or (parent_class_name == "customer" and
+                            correct_owner != SubjectAttribute.CUSTOMER):
                         form.add_error('attribute_type', 'That attribute cannot be used with the current parent object')
                         attribute_type_wrong = True
 
                     # Validate on the data types
                     if not attribute_type_wrong:
-                        if d['attribute_type'].data_type == SubjectAttribute.TEXT:
+                        if attr_type.data_type == SubjectAttribute.TEXT:
                             if any([d['value_date'] is not None, d['value_text'] == "",
                                     d['value_number'] is not None]):
                                 form.add_error('value_text', 'Please set TEXT and TEXT ONLY')
-                        if d['attribute_type'].data_type == SubjectAttribute.NUMBER:
+                        if attr_type.data_type == SubjectAttribute.NUMBER:
                             if any([d['value_date'] is not None, d['value_text'] is not "",
                                     d['value_number'] is None]):
                                 form.add_error('value_number', 'Please set NUMBER and NUMBER ONLY')
-                        if d['attribute_type'].data_type == SubjectAttribute.DATE:
+                        if attr_type.data_type == SubjectAttribute.DATE:
                             if any([d['value_date'] is None, d['value_text'] is not "",
                                     d['value_number'] is not None]):
                                 form.add_error('value_date', 'Please set DATE and DATE ONLY')
@@ -53,7 +56,7 @@ class SubjectAttributeInline(GenericTabularInline):
     ct_fk_field = 'owner_fk'
     extra = 1
     formset = SubjectAttributeInlineFormset
-    
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         print(qs)
@@ -69,7 +72,7 @@ class PersonAdmin(admin.ModelAdmin):
             self.message_user(request, "Cannot delete: this person is tied to an enterprise " + str(obj.enterprise), level=messages.ERROR)
             return
         obj.delete()
-        
+
     def has_delete_permission(self, request, obj=None):
         if (obj and obj.enterprise is not None):
             self.message_user(request, "This person is tied to an enterprise " + str(obj.enterprise) + " and therefore cannot be deleted", level=messages.WARNING)
