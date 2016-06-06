@@ -2,294 +2,122 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-from django.conf import settings
 import datetime
+from django.conf import settings
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('contenttypes', '0002_remove_content_type_name'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='Address',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('subject_fk', models.PositiveIntegerField(null=True, blank=True)),
-                ('country', models.CharField(max_length=50, null=True, blank=True)),
-                ('county', models.CharField(max_length=100, null=True, blank=True)),
-                ('town_village', models.CharField(max_length=100, null=True, blank=True)),
-                ('street_address', models.CharField(max_length=100, null=True, blank=True)),
-                ('zipcode', models.CharField(max_length=50, null=True, blank=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('country', models.CharField(max_length=50, blank=True, null=True)),
+                ('county', models.CharField(max_length=100, blank=True, null=True)),
+                ('town_village', models.CharField(max_length=100, blank=True, null=True)),
+                ('street_address', models.CharField(max_length=100, blank=True, null=True)),
+                ('zipcode', models.CharField(max_length=50, blank=True, null=True)),
+                ('type', models.PositiveSmallIntegerField(choices=[(1, 'Personal primary address'), (2, 'Secondary address'), (3, 'Business address')], blank=True, null=True)),
             ],
-            options={
-                'db_table': 'address',
-            },
-        ),
-        migrations.CreateModel(
-            name='AddressType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-            ],
-            options={
-                'db_table': 'address_type',
-            },
         ),
         migrations.CreateModel(
             name='Contact',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('subject_fk', models.PositiveIntegerField(null=True, blank=True)),
-                ('value_text', models.TextField(null=True, blank=True)),
-                ('orderby', models.DecimalField(decimal_places=0, null=True, max_digits=10, blank=True)),
-                ('note', models.TextField(null=True, blank=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('subject_fk', models.PositiveIntegerField(blank=True, null=True)),
+                ('value_text', models.TextField(blank=True, null=True)),
+                ('email', models.EmailField(max_length=100, blank=True, null=True)),
+                ('phone', models.CharField(max_length=100, blank=True, null=True)),
+                ('order_by', models.PositiveIntegerField(blank=True, null=True)),
+                ('note', models.TextField(blank=True, null=True)),
                 ('contact_type_fk', models.ForeignKey(to='contenttypes.ContentType')),
             ],
             options={
-                'db_table': 'contact',
-            },
-        ),
-        migrations.CreateModel(
-            name='ContactType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-            ],
-            options={
-                'db_table': 'contact_type',
-            },
-        ),
-        migrations.CreateModel(
-            name='Customer',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('subject_fk', models.PositiveIntegerField(null=True, blank=True)),
-                ('subject_type_fk', models.ForeignKey(to='contenttypes.ContentType')),
-            ],
-            options={
-                'db_table': 'customer',
+                'ordering': ['order_by'],
             },
         ),
         migrations.CreateModel(
             name='Employee',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('active', models.NullBooleanField()),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
             ],
-            options={
-                'db_table': 'employee',
-            },
         ),
         migrations.CreateModel(
             name='EmployeeRole',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('active', models.NullBooleanField()),
-                ('employee_fk', models.ForeignKey(to='arhitektuurkolm.Employee', blank=True, null=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('role_name', models.CharField(max_length=200, blank=True, null=True)),
             ],
-            options={
-                'db_table': 'employee_role',
-            },
-        ),
-        migrations.CreateModel(
-            name='EmployeeRoleType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-            ],
-            options={
-                'db_table': 'employee_role_type',
-            },
         ),
         migrations.CreateModel(
             name='Enterprise',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('name', models.TextField(null=True, blank=True)),
-                ('full_name', models.TextField(null=True, blank=True)),
-                ('created', models.DateTimeField(null=True, default=datetime.datetime.now, blank=True)),
-                ('updated', models.DateTimeField(null=True, blank=True)),
-                ('created_by', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='ent_created_by', blank=True, null=True)),
-                ('updated_by', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='ent_updated_by', blank=True, null=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('name', models.TextField(blank=True, null=True)),
+                ('full_name', models.TextField(blank=True, null=True)),
+                ('created', models.DateTimeField(blank=True, default=datetime.datetime.now, null=True)),
+                ('updated', models.DateTimeField(blank=True, null=True)),
+                ('is_customer', models.BooleanField(default=False)),
+                ('address', models.ForeignKey(blank=True, to='arhitektuurkolm.Address', null=True)),
+                ('created_by', models.ForeignKey(related_name='ent_created_by', blank=True, to='arhitektuurkolm.Employee', null=True)),
+                ('updated_by', models.ForeignKey(related_name='ent_updated_by', blank=True, to='arhitektuurkolm.Employee', null=True)),
             ],
-            options={
-                'db_table': 'enterprise',
-            },
-        ),
-        migrations.CreateModel(
-            name='EnterprisePersonRelation',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-            ],
-            options={
-                'db_table': 'enterprise_person_relation',
-            },
-        ),
-        migrations.CreateModel(
-            name='EntPerRelationType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-            ],
-            options={
-                'db_table': 'ent_per_relation_type',
-            },
         ),
         migrations.CreateModel(
             name='Person',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('first_name', models.CharField(max_length=100, null=True, blank=True)),
-                ('last_name', models.CharField(max_length=100, null=True, blank=True)),
-                ('identity_code', models.CharField(max_length=20, null=True, blank=True)),
-                ('birth_date', models.DateField(null=True, blank=True)),
-                ('created', models.DateTimeField(null=True, default=datetime.datetime.now, blank=True)),
-                ('updated', models.DateTimeField(null=True, blank=True)),
-                ('created_by', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='pers_created_by', blank=True, null=True)),
-                ('updated_by', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='pers_updated_by', blank=True, null=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('first_name', models.CharField(max_length=100, blank=True, null=True)),
+                ('last_name', models.CharField(max_length=100, blank=True, null=True)),
+                ('identity_code', models.CharField(max_length=20, blank=True, null=True)),
+                ('birth_date', models.DateField(blank=True, null=True)),
+                ('created', models.DateTimeField(auto_now_add=True)),
+                ('updated', models.DateTimeField(auto_now=True)),
+                ('relation_type', models.CharField(max_length=200, blank=True, null=True)),
+                ('is_customer', models.BooleanField(default=False)),
+                ('address', models.ForeignKey(blank=True, to='arhitektuurkolm.Address', null=True)),
+                ('created_by', models.ForeignKey(related_name='created_persons', blank=True, to='arhitektuurkolm.Employee', null=True)),
+                ('enterprise', models.ForeignKey(related_name='persons', blank=True, to='arhitektuurkolm.Enterprise', null=True)),
+                ('updated_by', models.ForeignKey(related_name='updated_persons', blank=True, to='arhitektuurkolm.Employee', null=True)),
+                ('user', models.OneToOneField(related_name='persons', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
-            options={
-                'db_table': 'person',
-            },
-        ),
-        migrations.CreateModel(
-            name='StructUnit',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('upper_unit_fk', models.PositiveIntegerField(null=True, blank=True)),
-                ('level', models.PositiveIntegerField(null=True, blank=True)),
-                ('name', models.CharField(max_length=200, null=True, blank=True)),
-                ('enterprise_fk', models.ForeignKey(to='arhitektuurkolm.Enterprise', blank=True, null=True)),
-            ],
-            options={
-                'db_table': 'struct_unit',
-            },
         ),
         migrations.CreateModel(
             name='SubjectAttribute',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('subject_fk', models.PositiveIntegerField(null=True, blank=True)),
-                ('orderby', models.IntegerField(null=True, blank=True)),
-                ('value_text', models.TextField(null=True, blank=True)),
-                ('value_number', models.DecimalField(decimal_places=0, null=True, max_digits=10, blank=True)),
-                ('value_date', models.DateField(null=True, blank=True)),
-                ('data_type', models.DecimalField(decimal_places=0, null=True, max_digits=1, blank=True)),
+                ('id', models.AutoField(primary_key=True, verbose_name='ID', serialize=False, auto_created=True)),
+                ('name', models.CharField(max_length=200, blank=True, null=True)),
+                ('value_text', models.TextField(blank=True, null=True)),
+                ('value_number', models.DecimalField(blank=True, null=True, max_digits=10, decimal_places=0)),
+                ('value_date', models.DateField(blank=True, null=True)),
+                ('data_type', models.PositiveSmallIntegerField(choices=[(1, 'Person'), (2, 'Enterprise'), (3, 'Employee'), (4, 'Customer')])),
+                ('belongs_to', models.PositiveSmallIntegerField(choices=[(1, 'Person'), (2, 'Enterprise'), (3, 'Employee'), (4, 'Customer')])),
+                ('is_required', models.BooleanField(default=True)),
+                ('order', models.PositiveIntegerField(blank=True, null=True)),
             ],
             options={
-                'db_table': 'subject_attribute',
+                'ordering': ['order'],
             },
-        ),
-        migrations.CreateModel(
-            name='SubjectAttributeType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-                ('data_type', models.DecimalField(decimal_places=0, null=True, max_digits=1, blank=True)),
-                ('orderby', models.DecimalField(decimal_places=0, null=True, max_digits=10, blank=True)),
-                ('required', models.NullBooleanField()),
-                ('multiple_attributes', models.NullBooleanField()),
-                ('created_by_default', models.NullBooleanField(default=True)),
-            ],
-            options={
-                'db_table': 'subject_attribute_type',
-            },
-        ),
-        migrations.CreateModel(
-            name='SubjectType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('type_name', models.CharField(max_length=200, null=True, blank=True)),
-            ],
-            options={
-                'db_table': 'subject_type',
-            },
-        ),
-        migrations.CreateModel(
-            name='UserAccount',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', auto_created=True, serialize=False, primary_key=True)),
-                ('status', models.DecimalField(decimal_places=0, null=True, max_digits=10, blank=True)),
-                ('valid_from', models.DateField(null=True, blank=True)),
-                ('valid_to', models.DateField(null=True, blank=True)),
-                ('created', models.DateTimeField(null=True, default=datetime.datetime.now, blank=True)),
-                ('password_never_expires', models.NullBooleanField()),
-                ('created_by', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='user_created_by', blank=True, null=True)),
-                ('subject_fk', models.ForeignKey(to='arhitektuurkolm.Employee', related_name='user_emp', blank=True, null=True)),
-                ('subject_type_fk', models.ForeignKey(to='arhitektuurkolm.SubjectType', blank=True, null=True)),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'db_table': 'user_account',
-            },
-        ),
-        migrations.AddField(
-            model_name='subjectattributetype',
-            name='subject_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.SubjectType', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='subjectattribute',
-            name='subject_attribute_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.SubjectAttributeType', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='subjectattribute',
-            name='subject_type_fk',
-            field=models.ForeignKey(to='contenttypes.ContentType'),
-        ),
-        migrations.AddField(
-            model_name='enterprisepersonrelation',
-            name='ent_per_relation_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.EntPerRelationType', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='enterprisepersonrelation',
-            name='enterprise_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.Enterprise', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='enterprisepersonrelation',
-            name='person_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.Person', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='employeerole',
-            name='employee_role_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.EmployeeRoleType', blank=True, null=True),
         ),
         migrations.AddField(
             model_name='employee',
-            name='enterprise_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.Enterprise', blank=True, null=True),
+            name='enterprise',
+            field=models.ForeignKey(blank=True, to='arhitektuurkolm.Enterprise', null=True),
         ),
         migrations.AddField(
             model_name='employee',
-            name='person_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.Person', blank=True, null=True),
+            name='roles',
+            field=models.ManyToManyField(to='arhitektuurkolm.EmployeeRole'),
         ),
         migrations.AddField(
             model_name='employee',
-            name='struct_unit_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.StructUnit', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='contact',
-            name='subject_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.SubjectType', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='address',
-            name='address_type_fk',
-            field=models.ForeignKey(to='arhitektuurkolm.AddressType', blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='address',
-            name='subject_type_fk',
-            field=models.ForeignKey(to='contenttypes.ContentType'),
+            name='user',
+            field=models.OneToOneField(to=settings.AUTH_USER_MODEL),
         ),
     ]

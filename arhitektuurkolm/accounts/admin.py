@@ -31,7 +31,6 @@ class UserCreationForm(auth_forms.UserCreationForm):
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        (_('Personal info'), {'fields': ('name',)}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
@@ -42,8 +41,8 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('email', 'password1', 'password2')}
         ),
     )
-    list_display = ('id', 'email', 'name', 'is_staff')
-    search_fields = ('email', 'name')
+    list_display = ('id', 'email', 'is_staff')
+    search_fields = ('email',)
     ordering = ('email',)
 
     form = UserChangeForm

@@ -35,7 +35,10 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('email address', max_length=254, unique=True)
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    identity_code = models.CharField(max_length=20, blank=True, null=True)
+    birth_date = models.DateField(blank=True, null=True)
 
     is_staff = models.BooleanField('staff status', default=False)
     is_active = models.BooleanField('active', default=True)
@@ -46,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     def get_full_name(self):
-        return self.name
+        return "{} {}".format(self.first_name, self.last_name)
 
     def get_short_name(self):
-        return self.name
+        return self.first_name
