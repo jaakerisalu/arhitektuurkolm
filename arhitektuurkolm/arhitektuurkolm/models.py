@@ -155,12 +155,8 @@ class SubjectAttribute(models.Model):
 
     name = models.CharField(max_length=200, blank=True, null=True)
 
-    value_text = models.TextField(blank=True, null=True)
-    value_number = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
-    value_date = models.DateField(blank=True, null=True)
-
     data_type = models.PositiveSmallIntegerField(choices=BELONGS_TO_CHOICES)
-    belongs_to = models.PositiveSmallIntegerField(choices=BELONGS_TO_CHOICES)
+    belongs_to_type = models.PositiveSmallIntegerField(choices=BELONGS_TO_CHOICES)
 
     is_required = models.BooleanField(default=True)
 
@@ -171,3 +167,29 @@ class SubjectAttribute(models.Model):
 
     def __str__(self):
         return "SubjectAttribute: " + str(self.name if self.name else "UNNAMED")
+
+
+class SubjectAttributeValue(models.Model):
+    def _get_possible_owners_q_object(self):
+        """
+            Limit the generic foreign key possibilities by type
+        """
+        q_map = {
+            SubjectAttribute.PERSON: models.Q(app_label='arhitektuurkolm', model='Person'),
+            SubjectAttribute.ENTERPRISE: models.Q(app_label='arhitektuurkolm', model='Enterprise'),
+            SubjectAttribute.EMPLOYEE: models.Q(app_label='arhitektuurkolm', model='Employee'),
+            SubjectAttribute.CUSTOMER: models.Q(app_label='arhitektuurkolm', model='Customer'),
+        }
+
+        return q_map[self.attribute_type.belongs_to_type]
+
+    attribute_type = models.ForeignKey(SubjectAttribute, related_name="values")
+
+    owner_fk = models.PositiveIntegerField(blank=True, null=True)
+    owner_type = models.ForeignKey(ContentType, limit_choices_to=_get_possible_owners_q_object)
+    belongs_to = GenericForeignKey('owner_type', 'owner_fk')
+
+    value_text = models.TextField(blank=True, null=True)
+    value_number = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
+    value_date = models.DateField(blank=True, null=True)
+
