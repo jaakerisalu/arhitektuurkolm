@@ -37,10 +37,13 @@ class Address(models.Model):
     zipcode = models.CharField(max_length=50, blank=True, null=True)
 
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES, blank=True, null=True)
+    
+    class Meta:
+        verbose_name_plural = "addresses"
 
     def __str__(self):
         values = [str(self.country), str(self.county), str(self.town_village), str(self.street_address), str(self.zipcode)]
-        return "/".join(values)
+        return "Address: " + "/".join(values)
 
 
 class Enterprise(models.Model):
@@ -56,16 +59,25 @@ class Enterprise(models.Model):
     # They might have an address
     address = models.ForeignKey(Address, null=True, blank=True)
 
+    def __str__(self):
+        values = [str(self.name), str(self.full_name), str(self.created_by), str(self.created)]
+        return ("Customer: " if is_customer else "Enterprise: ") + "/".join(values)
 
 class EmployeeRole(models.Model):
     role_name = models.CharField(max_length=200, blank=True, null=True)
+    
+    def __str__(self):
+        return "EmployeeRole: " + self.role_name
 
 
 class Employee(models.Model):
     enterprise = models.ForeignKey(Enterprise, blank=True, null=True)
     roles = models.ManyToManyField(EmployeeRole)
-
     user = models.OneToOneField(User)
+    
+    def __str__(self):
+        values = [str(self.user), str(self.roles), str(self.enterprise)]
+        return "Employee: " + "/".join(values)
 
 
 class Person(models.Model):
@@ -94,6 +106,10 @@ class Person(models.Model):
 
     # They might have an address
     address = models.ForeignKey(Address, null=True, blank=True)
+    
+    def __str__(self):
+        values = [str(self.first_name), str(self.last_name), str(self.identity_code), str(birth_date)]
+        return "Person" + (" (Customer)" if is_customer else "") + ": " + "/".join(values)
 
 
 class Contact(models.Model):
@@ -110,6 +126,11 @@ class Contact(models.Model):
 
     class Meta:
         ordering = ['order_by']
+        
+    
+    def __str__(self):
+        values = [str(self.subject), str(self.value_text), str(self.email), str(self.phone)]
+        return "Contact: " + "/".join(values)
 
 
 class SubjectAttribute(models.Model):
@@ -148,3 +169,7 @@ class SubjectAttribute(models.Model):
 
     class Meta:
         ordering = ['order']
+        
+    def __str__(self):
+        values = [str(self.name)]
+        return "SubjectAttribute: " + "/".join(values)
