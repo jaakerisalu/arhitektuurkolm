@@ -59,13 +59,21 @@ class SubjectAttributeInline(GenericTabularInline):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
+        magic_filter = [o.id for o in qs if o.attribute_type.get_belongs_to_type_display().lower() == self.parent_model.__name__.lower()]
+        print("DEBUG:")
+        print("QS BEFORE:")
+        print(qs)
+        print("THE FILTER:")
+        print(magic_filter)
+        print("QS AFTER:")
+        qs = qs.filter(id__in=magic_filter)
         print(qs)
         return qs
 
 
 class PersonAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline,)
-    
+
     def delete_model(self, request, obj):
         """
         Given a model instance delete it from the database.
