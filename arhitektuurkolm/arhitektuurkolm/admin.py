@@ -73,6 +73,7 @@ class SubjectAttributeInline(GenericTabularInline):
 
 class PersonAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline,)
+    search_fields = ["first_name", "last_name", "birth_date", "identity_code"]
 
     def delete_model(self, request, obj):
         """
@@ -100,11 +101,11 @@ class EnterpriseForm(forms.ModelForm):
 class EnterpriseAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline, )
     form = EnterpriseForm
+    search_fields = ["name", "full_name", "created"]
 
 
 class EmployeeAdmin(admin.ModelAdmin):
     inlines = (SubjectAttributeInline,)
-
 
 admin.site.register(Address)
 admin.site.register(Employee, EmployeeAdmin)
