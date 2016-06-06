@@ -13,14 +13,16 @@ from django.db import models
 from datetime import datetime
 from accounts.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 
 class Address(models.Model):
     address_type_fk = models.ForeignKey("AddressType", blank=True, null=True)
-    subject_fk = models.PositiveIntegerField(blank=True, null=True) # viit tabelisse person või enterprise
-    subject_type_fk = models.ForeignKey("SubjectType", blank=True, null=True) # välisvõti tabelisse, kus määratakse subjecti tüüp
-    subject = GenericForeignKey('subject_type_fk', 'subject_fk') # tegelik objekt?
+    limit = models.Q(app_label='arhitektuurkolm', model='Person') | models.Q(app_label='arhitektuurkolm', model='Enterprise')
+    subject_fk = models.PositiveIntegerField(blank=True, null=True)
+    subject_type_fk = models.ForeignKey(ContentType, limit_choices_to=limit)
+    subject = GenericForeignKey('subject_type_fk', 'subject_fk')
     country = models.CharField(max_length=50, blank=True, null=True)
     county = models.CharField(max_length=100, blank=True, null=True)
     town_village = models.CharField(max_length=100, blank=True, null=True)
@@ -39,8 +41,9 @@ class AddressType(models.Model):
 
 
 class Contact(models.Model):
-    contact_type_fk = models.ForeignKey("ContactType", blank=True, null=True)
+    limit = models.Q(app_label='arhitektuurkolm', model='Person') | models.Q(app_label='arhitektuurkolm', model='Enterprise')
     subject_fk = models.PositiveIntegerField(blank=True, null=True)
+    contact_type_fk = models.ForeignKey(ContentType, limit_choices_to=limit)
     subject = GenericForeignKey('contact_type_fk', 'subject_fk')
     value_text = models.TextField(blank=True, null=True)
     orderby = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
@@ -59,8 +62,10 @@ class ContactType(models.Model):
 
 
 class Customer(models.Model):
+
+    limit = models.Q(app_label='arhitektuurkolm', model='Person') | models.Q(app_label='arhitektuurkolm', model='Enterprise')
     subject_fk = models.PositiveIntegerField(blank=True, null=True)
-    subject_type_fk = models.ForeignKey("SubjectType", blank=True, null=True)
+    subject_type_fk = models.ForeignKey(ContentType, limit_choices_to=limit)
     subject = GenericForeignKey('subject_type_fk', 'subject_fk')
 
     class Meta:
@@ -103,8 +108,8 @@ class EntPerRelationType(models.Model):
 class Enterprise(models.Model):
     name = models.TextField(blank=True, null=True)
     full_name = models.TextField(blank=True, null=True)
-    created_by = models.ForeignKey("Employee", blank=True, null=True)
-    updated_by = models.ForeignKey("Employee", blank=True, null=True)
+    created_by = models.ForeignKey("Employee", related_name="ent_created_by", blank=True, null=True)
+    updated_by = models.ForeignKey("Employee", related_name="ent_updated_by", blank=True, null=True)
     created = models.DateTimeField(default=datetime.now, blank=True, null=True)
     updated = models.DateTimeField(blank=True, null=True)
     
@@ -125,8 +130,8 @@ class Person(models.Model):
     last_name = models.CharField(max_length=100, blank=True, null=True)
     identity_code = models.CharField(max_length=20, blank=True, null=True)
     birth_date = models.DateField(blank=True, null=True)
-    created_by = models.ForeignKey("Employee", blank=True, null=True)
-    updated_by = models.ForeignKey("Employee", blank=True, null=True)
+    created_by = models.ForeignKey("Employee", related_name="pers_created_by", blank=True, null=True)
+    updated_by = models.ForeignKey("Employee", related_name="pers_updated_by", blank=True, null=True)
     created = models.DateTimeField(default=datetime.now, blank=True, null=True)
     updated = models.DateTimeField(blank=True, null=True)
     
@@ -143,9 +148,12 @@ class StructUnit(models.Model):
         db_table = 'struct_unit'
 
 class SubjectAttribute(models.Model):
+
+    limit = models.Q(app_label='arhitektuurkolm', model='Person') | models.Q(app_label='arhitektuurkolm', model='Enterprise') | models.Q(app_label='arhitektuurkolm', model='Employee') | models.Q(app_label='arhitektuurkolm', model='Customer')
     subject_fk = models.PositiveIntegerField(blank=True, null=True)
-    subject_type_fk = models.ForeignKey("SubjectType", blank=True, null=True)
+    subject_type_fk = models.ForeignKey(ContentType, limit_choices_to=limit)
     subject = GenericForeignKey('subject_type_fk', 'subject_fk')
+    
     subject_attribute_type_fk = models.ForeignKey("SubjectAttributeType", blank=True, null=True)
     orderby = models.IntegerField(blank=True, null=True)
     value_text = models.TextField(blank=True, null=True)
@@ -180,13 +188,13 @@ class SubjectType(models.Model):
 class UserAccount(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     subject_type_fk = models.ForeignKey("SubjectType", blank=True, null=True) # alati 3
-    subject_fk = models.ForeignKey("Employee", blank=True, null=True)
+    subject_fk = models.ForeignKey("Employee", related_name="user_emp", blank=True, null=True)
     #username = models.CharField(max_length=50, blank=True, null=True)
     #passw = models.CharField(max_length=300, blank=True, null=True)
     status = models.DecimalField(max_digits=10, decimal_places=0, blank=True, null=True)
     valid_from = models.DateField(blank=True, null=True)
     valid_to = models.DateField(blank=True, null=True)
-    created_by = models.ForeignKey("Employee", blank=True, null=True)
+    created_by = models.ForeignKey("Employee", related_name="user_created_by", blank=True, null=True)
     created = models.DateTimeField(default=datetime.now, blank=True, null=True)
     password_never_expires = models.NullBooleanField(blank=True, null=True)
     
