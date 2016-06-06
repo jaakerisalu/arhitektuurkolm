@@ -30,6 +30,7 @@ EMAIL_SUBJECT_PREFIX = '[Arhitektuur kolm] '  # subject prefix for managers & ad
 SESSION_COOKIE_NAME = 'arhitektuurkolm_ssid'
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -63,6 +64,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
     'django.core.context_processors.request',
+    'django.template.context_processors.request',
 ]
 TEMPLATE_LOADERS = [
     'django.template.loaders.filesystem.Loader',
