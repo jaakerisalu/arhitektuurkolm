@@ -155,7 +155,7 @@ class SubjectAttribute(models.Model):
 
     name = models.CharField(max_length=200, blank=True, null=True)
 
-    data_type = models.PositiveSmallIntegerField(choices=BELONGS_TO_CHOICES)
+    data_type = models.PositiveSmallIntegerField(choices=DATA_TYPE_CHOICES)
     belongs_to_type = models.PositiveSmallIntegerField(choices=BELONGS_TO_CHOICES)
 
     is_required = models.BooleanField(default=True)
