@@ -14,20 +14,22 @@ class SubjectAttributeInlineFormset(BaseGenericInlineFormSet):
             try:
                 if form.cleaned_data:
                     d = form.cleaned_data
-                    attr_type = d['attribute_type']
-                    correct_owner = attr_type.belongs_to_type
+                    attr_type = None
+                    if 'attribute_type' in d:
+                        attr_type = d['attribute_type']
+                        correct_owner = attr_type.belongs_to_type
                     # I apologize to the gods of Python for __class__.__name__ And everything else
                     parent_class_name = self.instance.__class__.__name__.lower()
                     # Validate the attribute type
                     attribute_type_wrong = False
 
-                    if (parent_class_name == "enterprise" and
+                    if (parent_class_name == "enterprise" and attr_type is not None and
                             correct_owner != SubjectAttribute.ENTERPRISE)\
-                        or (parent_class_name == "person" and
+                        or (parent_class_name == "person" and attr_type is not None and
                             correct_owner != SubjectAttribute.PERSON)\
-                        or (parent_class_name == "employee" and
+                        or (parent_class_name == "employee" and attr_type is not None and
                             correct_owner != SubjectAttribute.EMPLOYEE)\
-                        or (parent_class_name == "customer" and
+                        or (parent_class_name == "customer" and attr_type is not None and
                             correct_owner != SubjectAttribute.CUSTOMER):
                         form.add_error('attribute_type', 'That attribute cannot be used with the current parent object')
                         attribute_type_wrong = True
