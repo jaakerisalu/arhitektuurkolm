@@ -34,18 +34,19 @@ class SubjectAttributeInlineFormset(BaseGenericInlineFormSet):
 
                     # Validate on the data types
                     if not attribute_type_wrong:
-                        if attr_type.data_type == SubjectAttribute.TEXT:
-                            if any([d['value_date'] is not None, d['value_text'] == "",
-                                    d['value_number'] is not None]):
-                                form.add_error('value_text', 'Please set TEXT and TEXT ONLY')
-                        if attr_type.data_type == SubjectAttribute.NUMBER:
-                            if any([d['value_date'] is not None, d['value_text'] is not "",
-                                    d['value_number'] is None]):
-                                form.add_error('value_number', 'Please set NUMBER and NUMBER ONLY')
-                        if attr_type.data_type == SubjectAttribute.DATE:
-                            if any([d['value_date'] is None, d['value_text'] is not "",
-                                    d['value_number'] is not None]):
-                                form.add_error('value_date', 'Please set DATE and DATE ONLY')
+                        if 'value_date' in d and 'value_number' in d and 'value_text' in d:
+                            if attr_type.data_type == SubjectAttribute.TEXT:
+                                if any([d['value_date'] is not None, d['value_text'] == "",
+                                        d['value_number'] is not None]):
+                                    form.add_error('value_text', 'Please set TEXT and TEXT ONLY')
+                            if attr_type.data_type == SubjectAttribute.NUMBER:
+                                if any([d['value_date'] is not None, d['value_text'] is not "",
+                                        d['value_number'] is None]):
+                                    form.add_error('value_number', 'Please set NUMBER and NUMBER ONLY')
+                            if attr_type.data_type == SubjectAttribute.DATE:
+                                if any([d['value_date'] is None, d['value_text'] is not "",
+                                        d['value_number'] is not None]):
+                                    form.add_error('value_date', 'Please set DATE and DATE ONLY')
             except AttributeError:
                 pass
 
